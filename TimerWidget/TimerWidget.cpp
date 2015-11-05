@@ -44,7 +44,7 @@ public:
 		//wdg->CreateTimer();
 		if (1 == m_btnStart->GetSliderRepresentation()->GetState())
 		{
-			m_nTimer = wdg->GetInteractor()->CreateRepeatingTimer(100);
+			m_nTimer = wdg->GetInteractor()->CreateRepeatingTimer(200);
 		}
 		else
 		{
@@ -96,10 +96,16 @@ public:
 	{
 		if (vtkCommand::TimerEvent == eventId)
 		{
-			TimerWidget *wdg = reinterpret_cast<TimerWidget*>(obj);
-			wdg->Update();
+			m_wdg->Update();
 		}
 	}
+public:
+	void SetTimerWidget(TimerWidget* wdg)
+	{
+		m_wdg = wdg;
+	}
+public:
+	TimerWidget* m_wdg;
 };
 
 TimerWidget::TimerWidget()
@@ -132,6 +138,7 @@ TimerWidget::TimerWidget()
 			*/
 
 	timerCallback = vtkTimerCallback::New();
+	timerCallback->SetTimerWidget(this);
 	
 	// These are the event callbacks supported by this widget
 	/*
@@ -381,6 +388,8 @@ void TimerWidget::SetVisualData(
 {
 
 	g_file = gFile;
+	std::cout << "gFile size : " << gFile.size() << std::endl;
+	std::cout << "g_file size : " << g_file.size() << std::endl;
 	// one point per line
 	// one triangle per three point
 	double point[3] = {0};
@@ -422,22 +431,21 @@ void TimerWidget::SetVisualData(
 	points->Modified();
 	triangles->Modified();
 	colors->Modified();
-
 	
 	//point->InserNextPoint();
 }
 
 void TimerWidget::Update()
 {
-	std::cout << g_file.size() << std::endl;
+	//std::cout << g_file.size() << std::endl;
 
-	/*
 	m_nCurIndex = (m_nCurIndex+1)%4;
 
 	// one point per line
 	// one triangle per three point
 	double point[3] = {0};
-	colors = vtkFloatArray::New();
+	//colors = vtkFloatArray::New();
+	colors->Reset();
 	for (int nIndex = 0; nIndex < g_file.size()/3; nIndex++)
 	{
 		colors->InsertNextValue(g_file[3*nIndex+0][m_nCurIndex*6+4]);
@@ -449,7 +457,6 @@ void TimerWidget::Update()
 	colors->Modified();
 
 	this->Interactor->Render();
-	*/
 	//point->InserNextPoint();
 }
 
